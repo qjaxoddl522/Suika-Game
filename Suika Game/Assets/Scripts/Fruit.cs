@@ -107,19 +107,23 @@ public class Fruit : MonoBehaviour
                 float otherX = other.transform.position.x;
                 float otherY = other.transform.position.y;
 
+                //중점 구하기
+                float midX = (meX + otherX) / 2;
+                float midY = (meY + otherY) / 2;
+
                 //1. 자신이 아래에 있을때
                 //2. 동일한 높이일 때, 자신이 오른쪽에 있을때
                 if (meY < otherY || (meY == otherY && meX > otherX)) {
                     //상대방은 숨김
-                    other.Hide(transform.position);
+                    other.Hide(new Vector3(midX, midY, 1), false);
                     //자신 레벨업
-                    LevelUp();
+                    Hide(new Vector3(midX, midY, 0), true);
                 }
             }
         }
     }
 
-    public void Hide(Vector3 targetpos)
+    public void Hide(Vector3 targetpos, bool levelUp)
     {
         isMerge = true;
 
@@ -130,56 +134,44 @@ public class Fruit : MonoBehaviour
             EffectPlay();
         }
 
-        StartCoroutine(HideRoutine(targetpos));
+        StartCoroutine(HideRoutine(targetpos, levelUp));
     }
 
-    IEnumerator HideRoutine(Vector3 targetpos)
+    IEnumerator HideRoutine(Vector3 targetpos, bool levelUp)
     {
         int frameCount = 0;
 
-        while (frameCount < 20) { //마치 Update처럼 로직 실행
+        while (frameCount < 10) { //마치 Update처럼 로직 실행
             frameCount++;
             if (targetpos != Vector3.up * 100) { //게임오버 아니면
-                transform.position = Vector3.Lerp(transform.position, targetpos, 0.5f);
+                transform.position = Vector3.Lerp(transform.position, targetpos, 0.7f);
             }
             else if (targetpos == Vector3.up * 100) {
                 transform.localScale = Vector3.Lerp(transform.localScale, Vector3.zero, 0.2f);
             }
-
             yield return null; //여러 프레임에 걸쳐 돌도록
         }
 
-        manager.score += (int)Mathf.Pow(2, level);
+        if (levelUp) {
+            manager.score += (int)Mathf.Pow(2, level); //점수 올리기
 
-        isMerge = false;
-        gameObject.SetActive(false);
-    }
+            anim.SetInteger("Level", level + 1); //애니메이터에 성장한 레벨값을 전달
+            EffectPlay();
+            manager.SfxPlay(GameManager.sfx.LevelUp);
 
-    void LevelUp()
-    {
-        isMerge = true;
+            level++;
 
-        //합쳐지면 속도 0으로 만들기
-        rigid.velocity = Vector2.zero;
-        rigid.angularVelocity = 0; //회전속도
+            manager.maxLevel = Mathf.Max(level, manager.maxLevel); //Mathf.Max - 인자값중에 최대값 반환
 
-        StartCoroutine(LevelUpRoutine());
-    }
+            rigid.simulated = true; //물리효과 활성화
+            circle.enabled = true; //콜라이더 활성화
 
-    IEnumerator LevelUpRoutine()
-    {
-        yield return new WaitForSeconds(0.2f);
-
-        anim.SetInteger("Level", level + 1); //애니메이터에 성장한 레벨값을 전달
-        EffectPlay();
-        manager.SfxPlay(GameManager.sfx.LevelUp);
-
-        yield return new WaitForSeconds(0.3f); //애니메이션 시간 고려
-        level++;
-
-        manager.maxLevel = Mathf.Max(level, manager.maxLevel); //인자값중에 최대값 반환
-
-        isMerge = false;
+            isMerge = false;
+        }
+        else {
+            isMerge = false;
+            gameObject.SetActive(false);
+        }
     }
 
     void OnTriggerStay2D(Collider2D collision)

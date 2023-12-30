@@ -168,7 +168,7 @@ public class GameManager : MonoBehaviour
 
         //3. 1번의 목록을 하나씩 접근해서 지우기
         for (int i = 0; i < fruits.Length; i++) {
-            fruits[i].Hide(Vector3.up * 100); //불가능한 좌표를 넣어 합쳐지는 경우와 분리
+            fruits[i].Hide(Vector3.up * 100, false); //불가능한 좌표를 넣어 합쳐지는 경우와 분리
             yield return new WaitForSeconds(0.1f);
         }
 
