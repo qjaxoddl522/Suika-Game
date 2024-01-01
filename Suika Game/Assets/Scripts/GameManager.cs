@@ -33,9 +33,13 @@ public class GameManager : MonoBehaviour
     [Header("------------[ UI ]")]
     public GameObject startGroup;
     public GameObject endGroup;
+    public GameObject NextFruitGroup;
     public Text scoreText;
     public Text maxScoreText;
     public Text subScoreText;
+    public Sprite[] fruitSprite;
+    public Image nextFruitImage;
+    public int nextFruitCursor;
 
     [Header("------------[ ETC ]")]
     public GameObject line;
@@ -55,7 +59,7 @@ public class GameManager : MonoBehaviour
             PlayerPrefs.SetInt("MaxScore", 0);
         }
 
-        maxScoreText.text = PlayerPrefs.GetInt("MaxScore").ToString();
+        maxScoreText.text = PlayerPrefs.GetInt("MaxScore").ToString();        
     }
 
     public void GameStart()
@@ -64,6 +68,7 @@ public class GameManager : MonoBehaviour
         line.SetActive(true);
         bottom.SetActive(true);
         scoreText.gameObject.SetActive(true);
+        NextFruitGroup.SetActive(true);
         maxScoreText.gameObject.SetActive(true);
         startGroup.SetActive(false);
 
@@ -111,7 +116,9 @@ public class GameManager : MonoBehaviour
         }
 
         lastfruit = GetFruit();
-        lastfruit.level = Random.Range(0, maxLevel); //0~7까지
+        lastfruit.level = nextFruitCursor;
+        nextFruitCursor = Random.Range(0, maxLevel); //0~7까지
+        nextFruitImage.sprite = fruitSprite[nextFruitCursor];
         lastfruit.gameObject.SetActive(true); //레벨 설정 후 활성화
 
         SfxPlay(GameManager.sfx.Next);
