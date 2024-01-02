@@ -163,12 +163,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   manager: {fileID: 0}
-  effect: {fileID: 0}
   level: 0
   isDrag: 0
   isMerge: 0
   isAttach: 0
   rigid: {fileID: 0}
+  levelUpScore: 0100000003000000060000000a0000000f000000150000001c000000
 --- !u!95 &7444466654528327490
 Animator:
   serializedVersion: 5

@@ -15,9 +15,9 @@ public class GameManager : MonoBehaviour
     public GameObject fruitPrefab;
     public Transform fruitGroup;
     public List<Fruit> fruitPool;
-    public GameObject effectPrefab;
-    public Transform effectGroup;
-    public List<ParticleSystem> effectPool;
+    //public GameObject effectPrefab;
+    //public Transform effectGroup;
+    //public List<ParticleSystem> effectPool;
     [Range(1, 30)] //아래 변수를 슬라이딩바로
     public int poolSize;
     public int poolCursor;
@@ -50,7 +50,7 @@ public class GameManager : MonoBehaviour
         Application.targetFrameRate = 60; //프레임 고정
 
         fruitPool = new List<Fruit>();
-        effectPool = new List<ParticleSystem> ();
+        //effectPool = new List<ParticleSystem> ();
         for (int i = 0; i < poolSize; i++) {
             MakeFruit();
         }
@@ -82,17 +82,17 @@ public class GameManager : MonoBehaviour
     Fruit MakeFruit() //과일을 새로 생성하는 함수
     {
         //이펙트 생성
-        GameObject instantEffectObj = Instantiate(effectPrefab, effectGroup); //인스턴스 생성함수
+        /*GameObject instantEffectObj = Instantiate(effectPrefab, effectGroup); //인스턴스 생성함수
         instantEffectObj.name = "Effect " + effectPool.Count;
         ParticleSystem instantEffect = instantEffectObj.GetComponent<ParticleSystem>();
-        effectPool.Add(instantEffect); //풀 리스트에 저장
+        effectPool.Add(instantEffect); //풀 리스트에 저장*/
 
         //과일 생성
         GameObject instantFruitObj = Instantiate(fruitPrefab, fruitGroup); //인스턴스 생성함수
         instantFruitObj.name = "Fruit " + fruitPool.Count;
         Fruit instantFruit = instantFruitObj.GetComponent<Fruit>();
         instantFruit.manager = this;
-        instantFruit.effect = instantEffect;
+        //instantFruit.effect = instantEffect;
         fruitPool.Add(instantFruit);
 
         return instantFruit;
@@ -174,12 +174,12 @@ public class GameManager : MonoBehaviour
         }
 
         //3. 1번의 목록을 하나씩 접근해서 지우기
-        for (int i = 0; i < fruits.Length; i++) {
+        /*for (int i = 0; i < fruits.Length; i++) {
             fruits[i].Hide(Vector3.up * 100, false); //불가능한 좌표를 넣어 합쳐지는 경우와 분리
             yield return new WaitForSeconds(0.1f);
-        }
+        }*/
 
-        yield return new WaitForSeconds(1f);
+        //yield return new WaitForSeconds(1f);
 
         //최고점수 갱신
         int maxScore = Mathf.Max(score, PlayerPrefs.GetInt("MaxScore"));
@@ -191,6 +191,8 @@ public class GameManager : MonoBehaviour
 
         bgmPlayer.Stop();
         SfxPlay(sfx.Over);
+
+        yield return null;
     }
 
     public void Reset()
@@ -201,7 +203,7 @@ public class GameManager : MonoBehaviour
 
     IEnumerator ResetCoroutine()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.5f);
         SceneManager.LoadScene(0);//0 또는 "Main"
     }
 

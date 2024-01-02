@@ -5,11 +5,11 @@ using UnityEngine;
 public class Fruit : MonoBehaviour
 {
     public GameManager manager;
-    public ParticleSystem effect;
+    //public ParticleSystem effect;
     public int level;
     public bool isDrag;
     public bool isMerge; //합쳐지고 있는지 확인
-    public bool isAttach; //최근에 부딫혔는지 확인
+    //public bool isAttach; //최근에 부딫혔는지 확인
 
     public Rigidbody2D rigid;
     CircleCollider2D circle;
@@ -17,6 +17,7 @@ public class Fruit : MonoBehaviour
     SpriteRenderer spriteRenderer;
 
     float deadTime;
+    public int[] levelUpScore;
 
     private void Awake() {
         rigid = GetComponent<Rigidbody2D>();
@@ -35,7 +36,7 @@ public class Fruit : MonoBehaviour
         level = 0;
         isDrag = false;
         isMerge = false;
-        isAttach = false;
+        //isAttach = false;
 
         transform.localPosition = Vector3.zero;
         transform.localRotation = Quaternion.identity;
@@ -77,7 +78,7 @@ public class Fruit : MonoBehaviour
         rigid.simulated = true;
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
+    /*void OnCollisionEnter2D(Collision2D collision)
     {
         StartCoroutine(AttachRoutine());
     }
@@ -93,7 +94,7 @@ public class Fruit : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
 
         isAttach = false;
-    }
+    }*/
 
     void OnCollisionStay2D(Collision2D collision)
     {
@@ -130,9 +131,9 @@ public class Fruit : MonoBehaviour
         rigid.simulated = false; //물리효과 비활성화
         circle.enabled = false; //콜라이더 비활성화
 
-        if(targetpos == Vector3.up * 100) { //게임오버 할 때 터지는 이펙트
+        /*if(targetpos == Vector3.up * 100) { //게임오버 할 때 터지는 이펙트
             EffectPlay();
-        }
+        }*/
 
         StartCoroutine(HideRoutine(targetpos, levelUp));
     }
@@ -153,10 +154,10 @@ public class Fruit : MonoBehaviour
         }
 
         if (levelUp) {
-            manager.score += (int)Mathf.Pow(2, level); //점수 올리기
+            manager.score += levelUpScore[level]; //점수 올리기
 
             anim.SetInteger("Level", level + 1); //애니메이터에 성장한 레벨값을 전달
-            EffectPlay();
+            //EffectPlay();
             manager.SfxPlay(GameManager.sfx.LevelUp);
 
             level++;
@@ -196,10 +197,10 @@ public class Fruit : MonoBehaviour
         }
     }
 
-    void EffectPlay()
+    /*void EffectPlay()
     {
         effect.transform.position = transform.position; //위치지정
         effect.transform.localScale = transform.localScale; //스케일 맞추기
         effect.Play();
-    }
+    }*/
 }
