@@ -44,10 +44,14 @@ public class GameManager : MonoBehaviour
     [Header("------------[ ETC ]")]
     public GameObject line;
     public GameObject bottom;
+    string log;
 
     private void Awake()
     {
         Application.targetFrameRate = 60; //프레임 고정
+
+        GPGSBinder.Inst.Login((success, localUser) =>
+        log = $"{success}, {localUser.userName}, {localUser.id}, {localUser.state}, {localUser.underage}");
 
         fruitPool = new List<Fruit>();
         //effectPool = new List<ParticleSystem> ();
@@ -60,6 +64,11 @@ public class GameManager : MonoBehaviour
         }
 
         maxScoreText.text = PlayerPrefs.GetInt("MaxScore").ToString();        
+    }
+
+    public void ShowLeaderboard()
+    {
+        GPGSBinder.Inst.ShowTargetLeaderboardUI(GPGSIds.leaderboard_score);
     }
 
     public void GameStart()
@@ -182,6 +191,9 @@ public class GameManager : MonoBehaviour
         //yield return new WaitForSeconds(1f);
 
         //최고점수 갱신
+        if (score > PlayerPrefs.GetInt("MaxScore")) { //최고점수 갱신 시에만 점수 등록
+            GPGSBinder.Inst.ReportLeaderboard(GPGSIds.leaderboard_score, score);
+        }
         int maxScore = Mathf.Max(score, PlayerPrefs.GetInt("MaxScore"));
         PlayerPrefs.SetInt("MaxScore", maxScore);
 
